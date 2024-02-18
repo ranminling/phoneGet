@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script type="text/javascript">
+    /*document.addEventListener("keydown", function (event){
+        if (event.ctrlKey){
+            event.preventDefault();
+        }
+        if(event.keyCode == 123){
+            event.preventDefault();
+        }
+    });
+
+    document.addEventListener('contextmenu',
+        event => event.preventDefault()
+    );*/
+</script>
+<body>
+    <div>号码数量：<input id="phoneNum" type="text" value="1000"/></div>
+    <div>号码分隔符：<input id="separator" type="text" value=","/></div>
+    <div>是否重复：<select id="repeat"><option selected>false</option><option>true</option></select></div>
+    <button onclick="getPhoneRandow()">生成</button><button><a id='download' href="">下载</a></button>
+</body>
+<script type="text/javascript">
+    const phoneMap = new Map();
+
+    // 定义手机号前3位
+    const firstThreeNumber = ["134", "135", "136", "137", "138", "139", "147", "150", "152", "157", "158", "159", "172", "178", "182", "183", "184", "187", "188", "198", "130", "131", "132", "145", "155", "156", "166", "171", "175", "176", "185", "186", "166", "133", "149", "153", "173", "177", "180", "181", "189", "199"];
+
+    // 生成号码数
+    var phoneNum = 1000;
+
+    // 是否允许重复
+    var repeat = false;
+
+    // 号码分隔符
+    var separator = ',';
+
+    var stringBuilder = '';
+
+    function getPhones(phoneLength) {
+        for (let j = 0; j < phoneLength; j++) {
+            // 随机获取前三位手机号的index
+            const n = Math.floor(Math.random() * firstThreeNumber.length);
+            // 获取手机前三位
+            let yy = firstThreeNumber[n];
+            // 循环获取手机号后8位
+            for (let i = 0; i < 8; i++) {
+                const x = Math.floor(Math.random() * 10);
+                yy += x;
+            }
+            if (!repeat) {
+                if (!phoneMap.has(yy)) {
+                    stringBuilder += yy + separator;
+                    phoneMap.set(yy, 1);
+                }
+            } else {
+                stringBuilder += yy + separator;
+            }
+        }
+    }
+
+    function getPhoneRandow() {
+        let downloadLink = document.getElementById('download');
+        // 清理资源
+        URL.revokeObjectURL(downloadLink.href);
+
+        phoneNum = document.getElementById('phoneNum').value;
+        separator = document.getElementById('separator').value;
+        repeat = document.getElementById('repeat').value;
+
+        console.log(phoneNum + separator + repeat);
+
+        while (phoneNum > stringBuilder.length / 12) {
+            getPhones(phoneNum - stringBuilder.length / 12);
+        }
+
+        // 创建 Blob 对象
+        const blob = new Blob([stringBuilder], { type: 'text/plain' });
+
+        // 创建下载链接
+        let url = URL.createObjectURL(blob);
+        console.log(url);
+
+        // 创建下载按钮
+        downloadLink.href = url;
+        downloadLink.download = '号码.txt';
+    }
+    // 将按钮添加到页面
+    //document.body.appendChild(downloadLink);
+
+    /*// 模拟点击下载按钮
+    downloadLink.click();*/
+
+</script>
+</html>
